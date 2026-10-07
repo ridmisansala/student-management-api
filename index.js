@@ -17,3 +17,11 @@ app.get(('/students'),async (req, res) => {
     const students = await collection.find({}).toArray();
     res.json(students);
 });
+app.delete('/removeStudent/:studentId', async (req, res) => {
+    const studentId = req.params.studentId;
+    await mongodb.connect();
+    const db = mongodb.db("studentDB");
+    const collection = db.collection("students");
+    await collection.deleteOne({ studentId: studentId });
+    res.json({ message: "Student removed successfully" });
+});

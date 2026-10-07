@@ -53,3 +53,11 @@ async function loadStudents() {
                 </td>`;
     });
 }
+async function removeStudent(studentId) {
+    const response = await fetch(`http://localhost:3000/removeStudent/${studentId}`, {
+        method: "DELETE"
+    });
+    const result = await response.json();
+    alert(result.message);
+    loadStudents();
+}
