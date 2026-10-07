@@ -53,3 +53,31 @@ async function loadStudents() {
                 </td>`;
     });
 }
+async function updateStudent() {
+
+
+    const firstName = document.getElementById("updated_firstName").value;
+    const lastName = document.getElementById("updated_lastName").value;
+    const email = document.getElementById("updated_email").value;
+    const course = document.getElementById("updated_course").value;
+    const batch = document.getElementById("updated_batch").value;
+    const age = document.getElementById("updated_age").value;
+
+    const response = await fetch(`http://localhost:3000/updateStudent/${currentStudentId}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            firstName,
+            lastName,
+            email,
+            course,
+            batch,
+            age
+        })
+    });
+    const result = await response.json();
+    alert(result.message);
+    loadStudents();
+}

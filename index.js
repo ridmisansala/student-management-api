@@ -17,3 +17,12 @@ app.get(('/students'),async (req, res) => {
     const students = await collection.find({}).toArray();
     res.json(students);
 });
+app.put('/updateStudent/:currentStudentId', async (req, res) => {
+    const currentStudentId = req.params.currentStudentId;
+    console.log("Updating student with ID: " + currentStudentId);
+    await mongodb.connect();
+    const db = mongodb.db("studentDB");
+    const collection = db.collection("students");
+    await collection.updateOne({ studentId: currentStudentId }, { $set: req.body });
+    res.json({ message: "Student updated successfully" });
+});
