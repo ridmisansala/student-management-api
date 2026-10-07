@@ -10,3 +10,10 @@ app.post('/saveStudent',async (req, res) => {
 
 
 });
+app.get(('/students'),async (req, res) => {
+    await mongodb.connect();
+    const db = mongodb.db("studentDB");
+    const collection = db.collection("students");
+    const students = await collection.find({}).toArray();
+    res.json(students);
+});
