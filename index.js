@@ -1,27 +1,35 @@
-app.post('/saveStudent',async (req, res) => {
-    console.log(req.body);
-    await mongodb.connect();
-    const db = mongodb.db("studentDB");
-    const collection = db.collection("students");
-    await collection.insertOne(req.body);
-    res.json({ message: "Student saved successfully" });
+app.get('/sortBy/:order',async (req, res)=>{
+    const order = req.params.order; 
+    const sort={
+        firstName:order==='asc'? 1:-1
+    }
     
+    await mongodb.connect();
+    const db = mongodb.db("studentDB");
+    const userArray=await db.collection("students").find().sort(sort).toArray();   
+    res.json(userArray);
+
+
+});
+
+app.get('/searchStudents/:searchTerm', async (req, res) => {
+      try {
+        console.log("Searching students with term:", req.params.searchTerm);
    
-
-
-});
-app.get(('/students'),async (req, res) => {
+    const query = req.params.searchTerm;
     await mongodb.connect();
     const db = mongodb.db("studentDB");
     const collection = db.collection("students");
-    const students = await collection.find({}).toArray();
+   const students = await collection.find({
+            $or: [
+                { firstName: { $regex: query, $options: "i" } },
+                { lastName: { $regex: query, $options: "i" } },
+                { email: { $regex: query, $options: "i" } }
+            ]
+        }).toArray();
     res.json(students);
-});
-app.delete('/removeStudent/:studentId', async (req, res) => {
-    const studentId = req.params.studentId;
-    await mongodb.connect();
-    const db = mongodb.db("studentDB");
-    const collection = db.collection("students");
-    await collection.deleteOne({ studentId: studentId });
-    res.json({ message: "Student removed successfully" });
+     } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: err.message });
+    }
 });
